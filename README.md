@@ -157,7 +157,7 @@ HOST=0.0.0.0
 
 ```bash
 # 캐시 없이 완전 재빌드
-docker-compose build --no-cache
+docker-compose build --no-cache # 시간 조금 걸림
 
 # 백그라운드에서 실행
 docker-compose up -d
