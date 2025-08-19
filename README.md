@@ -187,7 +187,7 @@ curl http://localhost:8093/health
   "model_type": "embedding",
   "loaded_with": "sentence_transformer",
   "model_loaded": true,
-  "supported_endpoints": ["/embedding"] # 엔드포인트 확인
+  "supported_endpoints": ["/embedding"]  # 엔드포인트 확인
 }
 ```
 
