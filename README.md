@@ -234,8 +234,8 @@ split -b 2G model_load_api.tar model_load_api.tar.part_
 # 3. 원본 tar 삭제 (용량 절약)
 rm model_load_api.tar
 
-# 4. 분할된 파일들 확인
-ls -lh model_load_api.tar.part_*
+# 4. 분할된 파일들 삭제
+rm model_load_api.tar.part_*
 ```
 
 ### 12단계: 메모리 정리
