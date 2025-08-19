@@ -177,11 +177,7 @@ sentence-transformer-api_1  | INFO:__main__:서버 시작: 0.0.0.0:8093
 ### 10단계: 서버 상태 확인
 
 ```bash
-# 서버 상태 확인
 curl http://localhost:8093/health
-
-# 또는 브라우저에서
-# http://[서버IP]:8093/health
 ```
 
 **예상 응답:**
