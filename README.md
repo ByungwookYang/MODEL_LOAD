@@ -58,14 +58,15 @@ models--jinaai--jina-embeddings-v2-base-code
 ```
 
 ### 4단계: 도커라이징 파일 클론 준비
-
+#### 홈 디렉토리로 이동
 ```bash
-# 홈 디렉토리로 이동
 cd ~
 
 # 작업 폴더 생성
 cd data
+
 mkdir bw  # 임의 자기 자신 폴더 만들기
+
 cd bw 
 ```
 
@@ -73,6 +74,7 @@ cd bw
 
 ```bash
 git clone https://github.com/ByungwookYang/MODEL_LOAD.git
+
 cd MODEL_LOAD
 ```
 
@@ -99,6 +101,7 @@ drwxrwxr-x  3 ubuntu ubuntu   4096 Aug 19 12:00 ..
 
 ```bash
 cp .env.example .env
+
 cat .env
 ```
 
