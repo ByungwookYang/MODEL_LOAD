@@ -321,25 +321,4 @@ docker-compose build --no-cache
 docker-compose up
 ```
 
-## 📋 요구사항
-
-- **Docker & Docker Compose** (필수)
-- **Python 3.9+** (Hugging Face CLI용)
-- **최소 8GB RAM** (모델 크기에 따라)
-- **인터넷 연결** (모델 다운로드용)
-
-## 🤝 기여하기
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## 📄 라이센스
-
-이 프로젝트는 MIT 라이센스를 따릅니다.
-
----
-
-**Made with ❤️ for AI Engineers**
+## 폐쇄망에서 도커이미지 로드
