@@ -123,12 +123,12 @@ nano docker-compose.yml
 ```yaml
 version: '3.8'
 services:
-  sentence-transformer-api:
+  sentence-transformer-api: # 도커 이미지 이름 설정(변경가능)
     build: .
     ports:
-      - "8093:8093"  # ${PORT}:${PORT} → "8093:8093" 변경
+      - "${PORT}:${PORT}"
     volumes:
-      - ~/.cache/huggingface:/root/.cache/huggingface
+      - ~/.cache/huggingface/hub/${MODEL_NAME}/snapshots/${SNAPSHOT_ID}:/app/mo> # 경로 지정 가능
     env_file:
       - .env
 ```
@@ -141,9 +141,9 @@ nano .env
 **기본 설정이면 수정할 필요 없음:**
 ```bash
 MODEL_PATH=/app/model
-MODEL_NAME=jinaai/jina-embeddings-v2-base-code
-MODEL_TYPE=embedding
-PORT=8093
+MODEL_NAME=jinaai/jina-embeddings-v2-base-code # 모델 폴더명 입력(변경가능)
+MODEL_TYPE=embedding # 모델 타입명 (v1/embedding/rerank 중 선택가능)
+PORT=8093 (사용 가능 포트로 변경)
 HOST=0.0.0.0
 ```
 
