@@ -128,7 +128,7 @@ services:
     ports:
       - "${PORT}:${PORT}"
     volumes:
-      - ~/.cache/huggingface/hub/${MODEL_NAME}/snapshots/${SNAPSHOT_ID}:/app/mo> # 경로 지정 가능
+      - ~/.cache/huggingface/hub/${MODEL_NAME}/snapshots/${SNAPSHOT_ID}:/app/mo> # 경로 지정 가능 (모델 폴터명, snapshot 해시값은 환경변수에서 받아옴)
     env_file:
       - .env
 ```
