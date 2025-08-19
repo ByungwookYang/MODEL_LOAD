@@ -65,14 +65,17 @@ cd ~
 
 # 작업 폴더 생성
 cd data
+
 mkdir bw  # 임의 자기 자신 폴더 만들기
+
 cd bw 
 ```
 
 ### 5단계: GitHub 저장소 클론
 
 ```bash
-git clone https://github.com/ByungwookYang/MODEL_LOAD.git
+git clone https://github.com/ByungwookYang/MODEL_LOAD.git # 그대로 가져다가 필요한 부분만 수정하기 
+
 cd MODEL_LOAD
 ```
 
