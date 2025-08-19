@@ -187,7 +187,7 @@ curl http://localhost:8093/health
   "model_type": "embedding",
   "loaded_with": "sentence_transformer",
   "model_loaded": true,
-  "supported_endpoints": ["/embedding"]
+  "supported_endpoints": ["/embedding"] # 엔드포인트 확인
 }
 ```
 
@@ -195,7 +195,7 @@ curl http://localhost:8093/health
 
 ```bash
 # 임베딩 API 테스트
-curl -X POST http://localhost:8093/embedding \
+curl -X POST http://localhost:8093/embedding \ # 엔드포인트 변경해줘야함
   -H "Content-Type: application/json" \
   -d '{"texts": ["Hello world", "안녕하세요"]}'
 ```
