@@ -236,7 +236,13 @@ rm model_load_api.tar
 
 # 4. 분할된 파일들 삭제
 rm model_load_api.tar.part_*
+
+# 5. 모델은 따로 압축해서 넘겨주기
+tar -czf - ~/.cache/huggingface/hub/models--jinaai--jina-embeddings-v2-base-code | split -b 2G - jina_model_part_
+
 ```
+
+
 
 ### 12단계: 메모리 정리
 
