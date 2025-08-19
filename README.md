@@ -225,7 +225,8 @@ model_load_sentence-transformer-api   latest    939135af1f59   8 minutes ago    
 ### 11단계: 이미지를 tar로 저장
 
 ```bash
-docker save model_load_sentence-transformer-api > model_load_api.tar
+# 1. 이미지를 tar로 저장
+docker save model_load_sentence-transformer-api > model_load_api.tar # 시간 오래걸릴 수 있음
 
 # 2. 2GB씩 분할
 split -b 2G model_load_api.tar model_load_api.tar.part_
@@ -239,6 +240,23 @@ ls -lh model_load_api.tar.part_*
 
 ### 12단계: 메모리 정리
 
+```bash
+# 1. 컨테이너 및 네트워크 정리
+docker-compose down
+
+# 2. 사용하지 않는 Docker 리소스 정리
+docker system prune -f
+
+# 3. 현재 Docker 이미지 확인
+docker images
+
+# 4. 불필요한 이미지 삭제 (선택사항)
+docker rmi model_load_sentence-transformer-api
+
+# 5. 최종 정리 확인
+docker ps -a
+docker images
+```
 
 ## 🔄 다른 모델로 변경하기
 
