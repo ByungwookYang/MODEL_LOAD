@@ -82,8 +82,6 @@ cd MODEL_LOAD
 ### 6단계: 프로젝트 파일 확인
 
 ```bash
-cd MODEL_LOAD
-
 ls -la
 ```
 
