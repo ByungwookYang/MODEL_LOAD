@@ -24,25 +24,88 @@ HOST = os.getenv('HOST', '0.0.0.0')
 model = None
 supported_endpoints = []
 
+def try_sentence_transformer_load(model_identifier):
+    """SentenceTransformer로 모델 로드 시도"""
+    try:
+        from sentence_transformers import SentenceTransformer
+        model = SentenceTransformer(model_identifier)
+        logger.info(f"SentenceTransformer로 모델 로드 성공: {model_identifier}")
+        return model, 'sentence_transformer'
+    except Exception as e:
+        logger.warning(f"SentenceTransformer 로드 실패: {e}")
+        return None, None
+
+def try_transformers_load(model_identifier):
+    """Transformers AutoModel로 모델 로드 시도"""
+    try:
+        from transformers import AutoModel, AutoTokenizer
+        
+        # MODEL_NAME이 models-- 형태라면 변환
+        if 'models--' in str(model_identifier):
+            model_name = model_identifier.replace('models--', '').replace('--', '/')
+        else:
+            model_name = model_identifier
+            
+        model = {
+            'model': AutoModel.from_pretrained(model_name),
+            'tokenizer': AutoTokenizer.from_pretrained(model_name)
+        }
+        logger.info(f"Transformers AutoModel로 모델 로드 성공: {model_name}")
+        return model, 'transformers'
+    except Exception as e:
+        logger.warning(f"Transformers AutoModel 로드 실패: {e}")
+        return None, None
+
 def load_model():
     global model, supported_endpoints
     try:
         logger.info(f"모델 타입: {MODEL_TYPE}, 경로: {MODEL_PATH}")
         
         if MODEL_TYPE == 'embedding':
-            from transformers import AutoModel, AutoTokenizer
+            model_loaded = False
+            model_type = None
             
-            # 환경변수에서 모델명 사용 (캐시된 모델 자동 감지)
-            model_name = MODEL_NAME.replace('models--', '').replace('--', '/')
-            model = {
-                'model': AutoModel.from_pretrained(model_name),
-                'tokenizer': AutoTokenizer.from_pretrained(model_name)
-            }
-            supported_endpoints = ['/embedding']
+            # 1순위: 로컬 경로로 SentenceTransformer 시도
+            if os.path.exists(MODEL_PATH):
+                logger.info(f"로컬 경로 시도: {MODEL_PATH}")
+                model, model_type = try_sentence_transformer_load(MODEL_PATH)
+                if model is not None:
+                    model_loaded = True
+            
+            # 2순위: 로컬 경로로 Transformers 시도
+            if not model_loaded and os.path.exists(MODEL_PATH):
+                logger.info(f"로컬 경로로 Transformers 시도: {MODEL_PATH}")
+                model, model_type = try_transformers_load(MODEL_PATH)
+                if model is not None:
+                    model_loaded = True
+            
+            # 3순위: MODEL_NAME으로 SentenceTransformer 시도
+            if not model_loaded:
+                logger.info(f"MODEL_NAME으로 SentenceTransformer 시도: {MODEL_NAME}")
+                model_name = MODEL_NAME.replace('models--', '').replace('--', '/') if 'models--' in MODEL_NAME else MODEL_NAME
+                model, model_type = try_sentence_transformer_load(model_name)
+                if model is not None:
+                    model_loaded = True
+            
+            # 4순위: MODEL_NAME으로 Transformers 시도
+            if not model_loaded:
+                logger.info(f"MODEL_NAME으로 Transformers 시도: {MODEL_NAME}")
+                model, model_type = try_transformers_load(MODEL_NAME)
+                if model is not None:
+                    model_loaded = True
+            
+            if model_loaded:
+                # 모델 타입에 따라 전역 변수 설정
+                globals()['model_type'] = model_type
+                supported_endpoints = ['/embedding']
+                logger.info(f"임베딩 모델 로드 완료! 타입: {model_type}")
+            else:
+                raise Exception("모든 방법으로 임베딩 모델 로드 실패")
         
         elif MODEL_TYPE == 'reranker':
             from sentence_transformers import CrossEncoder
             model = CrossEncoder(MODEL_PATH)
+            globals()['model_type'] = 'cross_encoder'
             supported_endpoints = ['/reranker']
         
         elif MODEL_TYPE == 'llm':
@@ -51,6 +114,7 @@ def load_model():
                 'tokenizer': AutoTokenizer.from_pretrained(MODEL_PATH),
                 'model': AutoModelForCausalLM.from_pretrained(MODEL_PATH)
             }
+            globals()['model_type'] = 'llm'
             supported_endpoints = ['/v1']
         
         else:
@@ -83,20 +147,35 @@ def embedding():
         if not isinstance(texts, list):
             texts = [texts]
         
-        # 토큰화
-        inputs = model['tokenizer'](texts, padding=True, truncation=True, return_tensors="pt")
+        # 모델 타입에 따라 다르게 처리
+        if globals().get('model_type') == 'sentence_transformer':
+            # SentenceTransformer 방식
+            embeddings = model.encode(texts)
+            return jsonify({
+                "embeddings": embeddings.tolist(),
+                "shape": list(embeddings.shape),
+                "model_type": "sentence_transformer"
+            })
         
-        # 임베딩 추출
-        with torch.no_grad():
-            outputs = model['model'](**inputs)
+        elif globals().get('model_type') == 'transformers':
+            # Transformers 방식
+            inputs = model['tokenizer'](texts, padding=True, truncation=True, return_tensors="pt")
+            
+            with torch.no_grad():
+                outputs = model['model'](**inputs)
+            
+            # 평균 풀링으로 문장 임베딩 생성
+            embeddings = outputs.last_hidden_state.mean(dim=1)
+            
+            return jsonify({
+                "embeddings": embeddings.numpy().tolist(),
+                "shape": list(embeddings.shape),
+                "model_type": "transformers"
+            })
         
-        # 평균 풀링으로 문장 임베딩 생성
-        embeddings = outputs.last_hidden_state.mean(dim=1)
-        
-        return jsonify({
-            "embeddings": embeddings.numpy().tolist(),
-            "shape": list(embeddings.shape)
-        })
+        else:
+            return jsonify({"error": "지원되지 않는 모델 타입"}), 500
+            
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -151,6 +230,7 @@ def health():
     return jsonify({
         "status": "ok",
         "model_type": MODEL_TYPE,
+        "loaded_with": globals().get('model_type', 'unknown'),
         "model_loaded": model is not None,
         "supported_endpoints": supported_endpoints
     })
@@ -159,6 +239,7 @@ def health():
 def home():
     return jsonify({
         "message": f"Multi-Model API ({MODEL_TYPE})",
+        "loaded_with": globals().get('model_type', 'unknown'),
         "supported_endpoints": supported_endpoints,
         "health": "/health"
     })
