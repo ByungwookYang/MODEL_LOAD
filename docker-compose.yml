@@ -5,6 +5,6 @@ services:
     ports:
       - "${PORT}:${PORT}"
     volumes:
-      - ~/.cache/huggingface/hub/${MODEL_NAME}/snapshots/${SNAPSHOT_ID}:/app/mo>
+      - ~/.cache/huggingface/hub/${MODEL_NAME}/snapshots/${SNAPSHOT_ID}:/app/model
     env_file:
       - .env
