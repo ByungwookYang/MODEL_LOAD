@@ -322,3 +322,14 @@ docker-compose up
 ```
 
 ## 폐쇄망에서 도커이미지 로드
+### 1. 리눅스 서버 접속
+
+### 2. 도커이미지 압축해제 및 로드
+```bash
+# 분할된 파일들 합치기
+cat model_load_api.tar.part_* > model_load_api.tar
+
+# Docker에 로드
+docker load < model_load_api.tar
+```
+
