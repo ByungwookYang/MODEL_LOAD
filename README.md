@@ -141,9 +141,10 @@ nano .env
 **기본 설정이면 수정할 필요 없음:**
 ```bash
 MODEL_PATH=/app/model
-MODEL_NAME=jinaai/jina-embeddings-v2-base-code # 모델 폴더명 입력(변경가능)
+MODEL_NAME=models--jinaai--jina-embeddings-v2-base-code # 모델 폴더명 입력(변경가능)
+SNAPSHOT_ID=516f4baf13dec4ddddda8631e019b5737c8bc250 # 해시값 입력 -> snapshots 폴더 안 해시폴더명(변경가능)
 MODEL_TYPE=embedding # 모델 타입명 (v1/embedding/rerank 중 선택가능)
-PORT=8093 (사용 가능 포트로 변경)
+PORT=8093 # 사용 가능 포트로 변경
 HOST=0.0.0.0
 ```
 
