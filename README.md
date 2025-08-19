@@ -340,4 +340,11 @@ cat model_load_api.tar.part_* > model_load_api.tar
 # Docker에 로드
 docker load < model_load_api.tar
 ```
+# .env 파일 확인
+cat .env
 
+# Docker Compose로 실행
+docker-compose up -d
+
+# 로그 확인
+docker-compose logs -f
