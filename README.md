@@ -112,7 +112,7 @@ PORT=8093
 HOST=0.0.0.0
 ```
 
-### 8단계: 필요 파일 수정
+### 8단계: 필요 파일 수정 -> 여기만 개인 모델에 맞게 설정
 
 **1) docker-compose.yml 수정**
 ```bash
@@ -138,7 +138,6 @@ services:
 nano .env
 ```
 
-**기본 설정이면 수정할 필요 없음:**
 ```bash
 MODEL_PATH=/app/model
 MODEL_NAME=models--jinaai--jina-embeddings-v2-base-code # 모델 폴더명 입력(변경가능)
