@@ -89,15 +89,16 @@ ls -la
 
 **예상 결과:**
 ```bash
-drwxrwxr-x  3 ubuntu ubuntu   4096 Aug 19 12:00 .
-drwxrwxr-x  3 ubuntu ubuntu   4096 Aug 19 12:00 ..
--rw-rw-r--  1 ubuntu ubuntu    123 Aug 19 12:00 .env.example
--rw-rw-r--  1 ubuntu ubuntu    456 Aug 19 12:00 .gitignore
--rw-rw-r--  1 ubuntu ubuntu    789 Aug 19 12:00 Dockerfile
--rw-rw-r--  1 ubuntu ubuntu   1234 Aug 19 12:00 app.py
--rw-rw-r--  1 ubuntu ubuntu    567 Aug 19 12:00 docker-compose.yml
--rw-rw-r--  1 ubuntu ubuntu    890 Aug 19 12:00 requirements.txt
--rw-rw-r--  1 ubuntu ubuntu   2345 Aug 19 12:00 README.md
+drwxrwxr-x 3 ubuntu ubuntu 4096 Aug 19 14:03 .
+drwxrwxr-x 3 ubuntu ubuntu 4096 Aug 19 14:03 ..
+-rw-rw-r-- 1 ubuntu ubuntu  175 Aug 19 14:03 .env.example
+drwxrwxr-x 8 ubuntu ubuntu 4096 Aug 19 14:03 .git
+-rw-rw-r-- 1 ubuntu ubuntu   74 Aug 19 14:03 .gitignore
+-rw-rw-r-- 1 ubuntu ubuntu  150 Aug 19 14:03 Dockerfile
+-rw-rw-r-- 1 ubuntu ubuntu 7208 Aug 19 14:03 README.md
+-rw-rw-r-- 1 ubuntu ubuntu 9046 Aug 19 14:03 app.py
+-rw-rw-r-- 1 ubuntu ubuntu  224 Aug 19 14:03 docker-compose.yml
+-rw-rw-r-- 1 ubuntu ubuntu   48 Aug 19 14:03 requirements.txt
 ```
 
 ### 7단계: .env 파일 복사하기
