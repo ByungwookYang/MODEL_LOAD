@@ -222,6 +222,24 @@ REPOSITORY                            TAG       IMAGE ID       CREATED          
 model_load_sentence-transformer-api   latest    939135af1f59   8 minutes ago       11.3GB
 ```
 
+### 11단계: 이미지를 tar로 저장
+
+```bash
+docker save model_load_sentence-transformer-api > model_load_api.tar
+
+# 2. 2GB씩 분할
+split -b 2G model_load_api.tar model_load_api.tar.part_
+
+# 3. 원본 tar 삭제 (용량 절약)
+rm model_load_api.tar
+
+# 4. 분할된 파일들 확인
+ls -lh model_load_api.tar.part_*
+```
+
+### 12단계: 메모리 정리
+
+
 ## 🔄 다른 모델로 변경하기
 
 ### Reranker 모델로 변경
