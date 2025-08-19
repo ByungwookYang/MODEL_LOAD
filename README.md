@@ -348,3 +348,27 @@ docker-compose up -d
 
 # 로그 확인
 docker-compose logs -f
+
+📝 1. .env 파일 생성
+bashnano .env
+내용:
+bashMODEL_PATH=/app/model
+MODEL_NAME=jinaai/jina-embeddings-v2-base-code
+MODEL_TYPE=embedding
+PORT=8093
+HOST=0.0.0.0
+📝 2. docker-compose.yml 파일 생성
+bashnano docker-compose.yml
+내용:
+yamlversion: '3.8'
+services:
+  sentence-transformer-api:
+    image: model_load_sentence-transformer-api:latest
+    ports:
+      - "8093:8093"
+    volumes:
+      - ~/.cache/huggingface:/root/.cache/huggingface
+    env_file:
+      - .env
+✅ 그 다음 실행
+bashdocker-compose up -d
