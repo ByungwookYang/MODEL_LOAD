@@ -27,9 +27,8 @@ MODEL_LOAD/
 ## 🛠️ 인터넷망에서 설치 및 실행확인
 
 ### 1단계: AWS 서버 접속 및 모델 다운로드 폴더 이동
-
+#### Hugging Face 캐시 폴더로 이동
 ```bash
-# Hugging Face 캐시 폴더로 이동
 cd ~/.cache/huggingface/hub
 ```
 
@@ -40,8 +39,10 @@ cd ~/.cache/huggingface/hub
 ```bash
 # Hugging Face CLI 설치 (없는 경우)
 pip install huggingface_hub
+```
 
-# 임베딩 모델 다운로드
+#### 임베딩 모델 다운로드
+```bash
 huggingface-cli download jinaai/jina-embeddings-v2-base-code
 ```
 
