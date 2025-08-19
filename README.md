@@ -54,8 +54,7 @@ ls
 **예상 결과:**
 ```bash
 (base) ubuntu@ip-10-21-3-181:~/.cache/huggingface/hub$ ls
-bge-reranker-large                            models--openai--gpt-oss-20b
-models--jinaai--jina-embeddings-v2-base-code  models--unsloth--gpt-oss-20b-GGUF
+models--jinaai--jina-embeddings-v2-base-code
 ```
 
 ### 4단계: 도커라이징 파일 클론 준비
