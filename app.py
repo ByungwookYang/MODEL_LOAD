@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 import os
 import logging
+import torch
 
 # .env 파일 로드
 load_dotenv()
@@ -14,6 +15,7 @@ app = Flask(__name__)
 
 # 환경변수에서 설정 읽기
 MODEL_PATH = os.getenv('MODEL_PATH', '/app/model')
+MODEL_NAME = os.getenv('MODEL_NAME', 'jinaai/jina-embeddings-v2-base-code')
 MODEL_TYPE = os.getenv('MODEL_TYPE', 'embedding').lower()
 PORT = int(os.getenv('PORT', 8093))
 HOST = os.getenv('HOST', '0.0.0.0')
@@ -28,8 +30,14 @@ def load_model():
         logger.info(f"모델 타입: {MODEL_TYPE}, 경로: {MODEL_PATH}")
         
         if MODEL_TYPE == 'embedding':
-            from sentence_transformers import SentenceTransformer
-            model = SentenceTransformer(MODEL_PATH)
+            from transformers import AutoModel, AutoTokenizer
+            
+            # 환경변수에서 모델명 사용 (캐시된 모델 자동 감지)
+            model_name = MODEL_NAME.replace('models--', '').replace('--', '/')
+            model = {
+                'model': AutoModel.from_pretrained(model_name),
+                'tokenizer': AutoTokenizer.from_pretrained(model_name)
+            }
             supported_endpoints = ['/embedding']
         
         elif MODEL_TYPE == 'reranker':
@@ -75,9 +83,18 @@ def embedding():
         if not isinstance(texts, list):
             texts = [texts]
         
-        embeddings = model.encode(texts)
+        # 토큰화
+        inputs = model['tokenizer'](texts, padding=True, truncation=True, return_tensors="pt")
+        
+        # 임베딩 추출
+        with torch.no_grad():
+            outputs = model['model'](**inputs)
+        
+        # 평균 풀링으로 문장 임베딩 생성
+        embeddings = outputs.last_hidden_state.mean(dim=1)
+        
         return jsonify({
-            "embeddings": embeddings.tolist(),
+            "embeddings": embeddings.numpy().tolist(),
             "shape": list(embeddings.shape)
         })
     except Exception as e:
