@@ -58,8 +58,9 @@ models--jinaai--jina-embeddings-v2-base-code
 ```
 
 ### 4단계: 도커라이징 파일 클론 준비
-#### 홈 디렉토리로 이동
+
 ```bash
+# 홈 디렉토리로 이동
 cd ~
 
 # 작업 폴더 생성
