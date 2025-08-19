@@ -328,39 +328,51 @@ docker-compose build --no-cache
 docker-compose up
 ```
 
-## 폐쇄망에서 도커이미지 로드
-### 1. 리눅스 서버 접속
-filezila를 통해서 압축파일 서버에 넣어주기
+# 폐쇄망 Docker 배포 가이드
 
-### 2. 도커이미지 압축해제 및 로드
+## 📦 1. 파일 전송
+FileZilla를 통해 압축파일들을 서버에 업로드
+- `model_load_api.tar.part_aa`
+- `model_load_api.tar.part_ab` 
+- `model_load_api.tar.part_ac`
+
+## 🐳 2. Docker 이미지 복원 및 로드
+
 ```bash
 # 분할된 파일들 합치기
 cat model_load_api.tar.part_* > model_load_api.tar
 
 # Docker에 로드
 docker load < model_load_api.tar
+
+# 이미지 확인
+docker images
 ```
-# .env 파일 확인
-cat .env
 
-# Docker Compose로 실행
-docker-compose up -d
+## 📝 3. 설정 파일 생성
 
-# 로그 확인
-docker-compose logs -f
+### .env 파일 생성
+```bash
+nano .env
+```
 
-📝 1. .env 파일 생성
-bashnano .env
-내용:
-bashMODEL_PATH=/app/model
+**내용:**
+```bash
+MODEL_PATH=/app/model
 MODEL_NAME=jinaai/jina-embeddings-v2-base-code
 MODEL_TYPE=embedding
 PORT=8093
 HOST=0.0.0.0
-📝 2. docker-compose.yml 파일 생성
-bashnano docker-compose.yml
-내용:
-yamlversion: '3.8'
+```
+
+### docker-compose.yml 파일 생성
+```bash
+nano docker-compose.yml
+```
+
+**내용:**
+```yaml
+version: '3.8'
 services:
   sentence-transformer-api:
     image: model_load_sentence-transformer-api:latest
@@ -370,5 +382,40 @@ services:
       - ~/.cache/huggingface:/root/.cache/huggingface
     env_file:
       - .env
-✅ 그 다음 실행
-bashdocker-compose up -d
+```
+
+## 🚀 4. 서비스 실행
+
+```bash
+# Docker Compose로 백그라운드 실행
+docker-compose up -d
+
+# 로그 확인
+docker-compose logs -f
+
+# 서비스 상태 확인
+docker ps
+```
+
+## 🧪 5. API 테스트
+
+```bash
+# 서버 상태 확인
+curl http://127.0.0.1:8093/health
+
+# 임베딩 API 테스트
+curl -X POST http://127.0.0.1:8093/embedding \
+  -H "Content-Type: application/json" \
+  -d '{"texts": ["Hello world", "안녕하세요"]}'
+```
+
+## 🔧 6. 정리
+
+```bash
+# 사용한 tar 파일 삭제 (용량 절약)
+rm model_load_api.tar
+rm model_load_api.tar.part_*
+
+# 서비스 중지 (필요시)
+docker-compose down
+```
