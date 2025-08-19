@@ -97,3 +97,11 @@ drwxrwxr-x  3 ubuntu ubuntu   4096 Aug 19 12:00 ..
 -rw-rw-r--  1 ubuntu ubuntu    890 Aug 19 12:00 requirements.txt
 -rw-rw-r--  1 ubuntu ubuntu   2345 Aug 19 12:00 README.md
 ```
+
+### 7단계: .env 파일 복사하기
+
+cp .env.example .env
+
+### 8단계: 필요 파일 수정
+
+1) 
