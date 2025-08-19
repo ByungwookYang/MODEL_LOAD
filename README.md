@@ -30,12 +30,27 @@ git clone https://github.com/ByungwookYang/MODEL_LOAD.git
 cd MODEL_LOAD
 ```
 
-### 2. 환경변수 설정
+### 2. 파일 확인
+```bash
+ls -la
+```
+
+### 3. 환경변수 설정
 ```bash
 cp .env.example .env
 ```
 
-### 3. .env 파일 수정
+### 4. 환경변수 파일 확인
+```bash
+cat .env
+```
+
+### 5. .env 파일 수정
+### 5. .env 파일 수정
+```bash
+nano .env
+```
+
 본인 환경에 맞게 `.env` 파일을 수정하세요:
 
 ```bash
@@ -53,7 +68,7 @@ HOST=0.0.0.0
 - `MODEL_TYPE`: 모델 타입 (embedding/reranker/llm)
 - `PORT`: 사용할 포트 번호
 
-### 4. 실제 모델 경로 확인
+### 6. 실제 모델 경로 확인
 ```bash
 # 모델 목록 확인
 ls ~/sw/llm/.cache/huggingface/hub/
@@ -62,7 +77,7 @@ ls ~/sw/llm/.cache/huggingface/hub/
 ls ~/sw/llm/.cache/huggingface/hub/models--sentence-transformers--all-MiniLM-L6-v2/snapshots/
 ```
 
-### 5. Docker 실행
+### 7. Docker 실행
 ```bash
 docker-compose up --build
 ```
