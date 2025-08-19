@@ -54,7 +54,8 @@ ls
 **예상 결과:**
 ```bash
 (base) ubuntu@ip-10-21-3-181:~/.cache/huggingface/hub$ ls
-models--jinaai--jina-embeddings-v2-base-code
+bge-reranker-large                            models--openai--gpt-oss-20b
+models--jinaai--jina-embeddings-v2-base-code  models--unsloth--gpt-oss-20b-GGUF
 ```
 
 ### 4단계: 도커라이징 파일 클론 준비
@@ -65,17 +66,14 @@ cd ~
 
 # 작업 폴더 생성
 cd data
-
 mkdir bw  # 임의 자기 자신 폴더 만들기
-
 cd bw 
 ```
 
 ### 5단계: GitHub 저장소 클론
 
 ```bash
-git clone https://github.com/ByungwookYang/MODEL_LOAD.git # 그대로 가져다가 필요한 부분만 수정하기 
-
+git clone https://github.com/ByungwookYang/MODEL_LOAD.git
 cd MODEL_LOAD
 ```
 
@@ -100,8 +98,199 @@ drwxrwxr-x  3 ubuntu ubuntu   4096 Aug 19 12:00 ..
 
 ### 7단계: .env 파일 복사하기
 
+```bash
 cp .env.example .env
+cat .env
+```
+
+**예상 결과:**
+```bash
+MODEL_PATH=/app/model
+MODEL_NAME=jinaai/jina-embeddings-v2-base-code
+MODEL_TYPE=embedding
+PORT=8093
+HOST=0.0.0.0
+```
 
 ### 8단계: 필요 파일 수정
 
-1) 
+**1) docker-compose.yml 수정**
+```bash
+nano docker-compose.yml
+```
+
+**포트 설정 수정 (환경변수 → 직접 값):**
+```yaml
+version: '3.8'
+services:
+  sentence-transformer-api:
+    build: .
+    ports:
+      - "8093:8093"  # ${PORT}:${PORT} → "8093:8093" 변경
+    volumes:
+      - ~/.cache/huggingface:/root/.cache/huggingface
+    env_file:
+      - .env
+```
+
+**2) .env 파일 확인 및 수정 (필요시)**
+```bash
+nano .env
+```
+
+**기본 설정이면 수정할 필요 없음:**
+```bash
+MODEL_PATH=/app/model
+MODEL_NAME=jinaai/jina-embeddings-v2-base-code
+MODEL_TYPE=embedding
+PORT=8093
+HOST=0.0.0.0
+```
+
+### 9단계: Docker 빌드 및 실행
+
+```bash
+# Docker 이미지 빌드
+docker-compose build
+
+# 백그라운드에서 실행
+docker-compose up -d
+
+# 또는 실시간 로그 확인하며 실행
+docker-compose up
+```
+
+**예상 성공 로그:**
+```bash
+sentence-transformer-api_1  | INFO:__main__:모델 타입: embedding, 경로: /app/model
+sentence-transformer-api_1  | INFO:__main__:MODEL_NAME으로 SentenceTransformer 시도: jinaai/jina-embeddings-v2-base-code
+sentence-transformer-api_1  | INFO:__main__:SentenceTransformer로 모델 로드 성공: jinaai/jina-embeddings-v2-base-code
+sentence-transformer-api_1  | INFO:__main__:임베딩 모델 로드 완료! 타입: sentence_transformer
+sentence-transformer-api_1  | INFO:__main__:모델 로드 완료! 지원 엔드포인트: ['/embedding']
+sentence-transformer-api_1  | INFO:__main__:서버 시작: 0.0.0.0:8093
+```
+
+### 10단계: 서버 상태 확인
+
+```bash
+# 서버 상태 확인
+curl http://localhost:8093/health
+
+# 또는 브라우저에서
+# http://[서버IP]:8093/health
+```
+
+**예상 응답:**
+```json
+{
+  "status": "ok",
+  "model_type": "embedding",
+  "loaded_with": "sentence_transformer",
+  "model_loaded": true,
+  "supported_endpoints": ["/embedding"]
+}
+```
+
+### 11단계: API 테스트
+
+```bash
+# 임베딩 API 테스트
+curl -X POST http://localhost:8093/embedding \
+  -H "Content-Type: application/json" \
+  -d '{"texts": ["Hello world", "안녕하세요"]}'
+```
+
+**예상 응답:**
+```json
+{
+  "embeddings": [[0.1, 0.2, ...], [0.3, 0.4, ...]],
+  "shape": [2, 768],
+  "model_type": "sentence_transformer"
+}
+```
+
+## 🔄 다른 모델로 변경하기
+
+### Reranker 모델로 변경
+
+```bash
+# 1. 리랭커 모델 다운로드
+huggingface-cli download BAAI/bge-reranker-base
+
+# 2. .env 파일 수정
+nano .env
+```
+
+**.env 파일 내용 변경:**
+```bash
+MODEL_NAME=BAAI/bge-reranker-base
+MODEL_TYPE=reranker
+```
+
+```bash
+# 3. 재시작
+docker-compose down
+docker-compose up -d
+```
+
+### LLM 모델로 변경
+
+```bash
+# 1. LLM 모델 다운로드
+huggingface-cli download microsoft/DialoGPT-medium
+
+# 2. .env 파일 수정
+MODEL_NAME=microsoft/DialoGPT-medium
+MODEL_TYPE=llm
+
+# 3. 재시작
+docker-compose down
+docker-compose up -d
+```
+
+## 🐛 문제 해결
+
+### 모델 로드 실패
+```bash
+# 로그 확인
+docker-compose logs
+
+# 모델 파일 확인
+ls ~/.cache/huggingface/hub/models--jinaai--jina-embeddings-v2-base-code/
+```
+
+### 포트 충돌
+```bash
+# .env 파일에서 포트 변경
+PORT=8094
+```
+
+### Docker 캐시 문제
+```bash
+# 강제 재빌드
+docker-compose build --no-cache
+docker-compose up
+```
+
+## 📋 요구사항
+
+- **Docker & Docker Compose** (필수)
+- **Python 3.9+** (Hugging Face CLI용)
+- **최소 8GB RAM** (모델 크기에 따라)
+- **인터넷 연결** (모델 다운로드용)
+
+## 🤝 기여하기
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📄 라이센스
+
+이 프로젝트는 MIT 라이센스를 따릅니다.
+
+---
+
+**Made with ❤️ for AI Engineers**
