@@ -174,8 +174,8 @@ sentence-transformer-api_1  | INFO:__main__:모델 로드 완료! 지원 엔드�
 sentence-transformer-api_1  | INFO:__main__:서버 시작: 0.0.0.0:8093
 ```
 
-### 10단계: 서버 상태 확인
-
+### 10단계:상태 확인
+#### 1) 서버 상태 확인
 ```bash
 curl http://localhost:8093/health
 ```
@@ -191,7 +191,7 @@ curl http://localhost:8093/health
 }
 ```
 
-### 11단계: API 테스트
+#### 2) API 테스트
 
 ```bash
 # 임베딩 API 테스트
@@ -207,6 +207,19 @@ curl -X POST http://localhost:8093/embedding \ # 엔드포인트 변경해줘야
   "shape": [2, 768],
   "model_type": "sentence_transformer"
 }
+```
+
+#### 3) 도커 이미지 확인
+```bash
+docker images
+```
+
+
+**예상 결과:**
+```bash
+(base) ubuntu@ip-10-21-3-181:~/data/bw/MODEL_LOAD$ docker images
+REPOSITORY                            TAG       IMAGE ID       CREATED             SIZE
+model_load_sentence-transformer-api   latest    939135af1f59   8 minutes ago       11.3GB
 ```
 
 ## 🔄 다른 모델로 변경하기
