@@ -156,14 +156,14 @@ HOST=0.0.0.0
 ### 9단계: Docker 빌드 및 실행
 
 ```bash
-# Docker 이미지 빌드
-docker-compose build
+# 캐시 없이 완전 재빌드
+docker-compose build --no-cache
 
 # 백그라운드에서 실행
 docker-compose up -d
 
-# 또는 실시간 로그 확인하며 실행
-docker-compose up
+# 로그 확인
+docker-compose logs -f
 ```
 
 **예상 성공 로그:**
