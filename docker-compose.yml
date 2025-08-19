@@ -3,8 +3,8 @@ services:
   sentence-transformer-api:
     build: .
     ports:
-      - "${PORT}:${PORT}"  # 포트는 .env에서 가져올 수 있음
+      - "${PORT}:${PORT}"
     volumes:
-      - ~/sw/llm/.cache/huggingface/hub/${MODEL_NAME}/snapshots/${SNAPSHOT_ID}:/app/model
+      - ~/.cache/huggingface/hub/${MODEL_NAME}/snapshots/${SNAPSHOT_ID}:/app/mo>
     env_file:
       - .env
